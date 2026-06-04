@@ -335,8 +335,17 @@ const SNAPSHOTS = [
 let MONTHLY_SAVINGS   = 50000;   // ฿ per month added
 let ANNUAL_RETURN     = 7;       // % per year expected return
 let MONTHLY_GOAL      = 120000;  // ฿/month retirement income
-let AGE_YOU           = 34;      // Pao's current age
-let AGE_WIFE          = 32;      // Toon's current age
+const DOB_PAO         = new Date(1992, 11, 19); // 19 Dec 1992
+const DOB_TOON        = new Date(1994,  2, 18); // 18 Mar 1994
+function calcAge(dob) {
+  const now = new Date();
+  let age = now.getFullYear() - dob.getFullYear();
+  const m = now.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) age--;
+  return age;
+}
+let AGE_YOU  = calcAge(DOB_PAO);
+let AGE_WIFE = calcAge(DOB_TOON);
 
 // ─── DERIVED ───
 function targetNestEgg()  { return MONTHLY_GOAL * 12 * 25; }
@@ -462,28 +471,6 @@ function fmtFull(n) { return '฿' + Math.round(n).toLocaleString(); }
         <input type="range" id="sl-goal" min="60000" max="300000" step="10000" value="120000">
         <span class="a-row-val" id="sl-goal-val">฿120K</span>
       </div>
-      <div class="assumption-row">
-        <span class="a-row-label">Pao's current age</span>
-        <input type="range" id="sl-age" min="25" max="45" step="1" value="34">
-        <span class="a-row-val" id="sl-age-val">34</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- HOW TO UPDATE -->
-  <div class="section fade-in">
-    <div class="section-title">How to Update This Dashboard</div>
-    <div class="update-card">
-      <h3>Monthly update — takes 2 minutes</h3>
-      <ol>
-        <li>Open this file in any text editor (TextEdit, VS Code, Notepad).</li>
-        <li>Find the <code>SNAPSHOTS</code> array near the top of the <code>&lt;script&gt;</code> block.</li>
-        <li>Add a new line at the bottom of the array following this format:<br>
-          <code>[YYYYMM, Total, Cash, Investment, ...]</code>
-        </li>
-        <li>Save the file and refresh in your browser. All charts and projections update automatically.</li>
-        <li>Share the updated file with your wife via iCloud Drive or AirDrop.</li>
-      </ol>
     </div>
   </div>
 
@@ -746,9 +733,6 @@ bindSlider('sl-goal', 'sl-goal-val',
   () => MONTHLY_GOAL, v => MONTHLY_GOAL = v,
   v => '฿' + (v/1000).toFixed(0) + 'K');
 
-bindSlider('sl-age', 'sl-age-val',
-  () => AGE_YOU, v => AGE_YOU = v,
-  v => String(Math.round(v)));
 
 // ─────────────────────────────────────────
 //  INIT
