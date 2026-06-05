@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'Tracker.xlsx'
+  workflow_dispatch:
 
 jobs:
   update:
