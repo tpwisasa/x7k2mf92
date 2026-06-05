@@ -1,43 +1,33 @@
 #!/usr/bin/env python3
 """
-Reads Tracker.xlsx and rewrites the data section of index.html.
+Reads Tracker.numbers and rewrites the SNAPSHOTS data in index.html.
 Run locally or via GitHub Actions.
 """
 import re
-import openpyxl
+from numbers_parser import Document
 
-XLSX = "Tracker.xlsx"
+NUMBERS = "Tracker.numbers"
 HTML = "index.html"
 
 MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-ALLOC_COLORS = {
-    'Cash':            '#888780',
-    'Company Stock':   '#c8a96e',
-    'Tax Saving Fund': '#7eb89a',
-    'Jitta Funds':     '#e0c07a',
-    'Thai Stocks':     '#a0c4b8',
-    'Provident Fund':  '#b09070',
-    'Gold':            '#d4b04a',
-    'Non-Tax Saving':  '#6a8f80',
-    'Crypto':          '#e07b5a',
-}
 
 def n(v):
     try:
         val = float(v or 0)
-        return int(round(val)) if val == val else 0  # handle NaN
+        return int(round(val)) if val == val else 0
     except (TypeError, ValueError):
         return 0
 
-wb = openpyxl.load_workbook(XLSX, data_only=True)
-ws = wb.active
+doc = Document(NUMBERS)
+table = doc.sheets[0].tables[0]
 
 # Collect data rows (skip 3 header rows, stop at empty YRM)
 rows = []
-for row in ws.iter_rows(min_row=4, values_only=True):
-    if not row[0] or not str(row[0]).strip():
+for row in table.iter_rows(min_row=3):
+    vals = [c.value for c in row]
+    if not vals[0] or not str(vals[0]).strip():
         break
-    rows.append(row)
+    rows.append(vals)
 
 # Build SNAPSHOTS lines
 # Excel cols (0-indexed): 0=YRM, 1=UOB, 2=KBANK, 3=KBANKTravel, 4=CIMB,
@@ -79,56 +69,8 @@ for r in rows:
 
 snapshots_js = "const SNAPSHOTS = [\n" + "\n".join(snap_lines) + "\n];"
 
-# Latest snapshot for ALLOC
-s = [
-    n(rows[-1][0]),   # YRM
-    n(rows[-1][25]),  # Total
-    n(rows[-1][23]),  # Cash
-    n(rows[-1][24]),  # Investment
-    n(rows[-1][1]),   # UOB
-    n(rows[-1][2]),   # KBANK
-    n(rows[-1][3]),   # KBANKTravel
-    n(rows[-1][4]),   # CIMB
-    n(rows[-1][5]),   # SCB
-    n(rows[-1][6]),   # SCBHome
-    n(rows[-1][7]),   # BAY_cash
-    n(rows[-1][8]),   # BAY_stock
-    n(rows[-1][9]),   # TISCO
-    n(rows[-1][10]),  # Jitta_VN
-    n(rows[-1][11]),  # Jitta_World
-    n(rows[-1][12]),  # Jitta_Thematic
-    n(rows[-1][13]),  # Crypto
-    n(rows[-1][14]),  # Tax_UOB
-    n(rows[-1][15]),  # Tax_Inno
-    n(rows[-1][16]),  # NonTax
-    n(rows[-1][17]),  # SharePlan
-    n(rows[-1][18]),  # LTI
-    n(rows[-1][19]),  # Prov_Pao
-    n(rows[-1][20]),  # Prov_Toon
-    n(rows[-1][21]),  # Gold_Physical
-]
-
-alloc = [
-    ('Cash',            s[2]),
-    ('Company Stock',   s[20] + s[21]),
-    ('Tax Saving Fund', s[17] + s[18]),
-    ('Jitta Funds',     s[13] + s[14] + s[15]),
-    ('Thai Stocks',     s[11] + s[12]),
-    ('Provident Fund',  s[22] + s[23]),
-    ('Gold',            s[24]),
-    ('Non-Tax Saving',  s[19]),
-    ('Crypto',          s[16]),
-]
-
-alloc_lines = []
-for name, val in alloc:
-    color = ALLOC_COLORS[name]
-    alloc_lines.append(f"  {{ name: '{name}', color: '{color}', val: {val} }},")
-
-alloc_js = "const ALLOC_CATEGORIES = [\n" + "\n".join(alloc_lines) + "\n];"
-
 # Date label from latest YRM
-yrm = str(s[0])
+yrm = str(n(rows[-1][0]))
 mon = MONTHS[int(yrm[4:6]) - 1]
 yr  = yrm[:4]
 date_label = f"{mon} {yr}"
@@ -144,24 +86,10 @@ html = re.sub(
     html, count=1
 )
 
-# Replace ALLOC_CATEGORIES block
-html = re.sub(
-    r'const ALLOC_CATEGORIES = \[[\s\S]*?\];',
-    alloc_js,
-    html, count=1
-)
-
 # Replace "Last updated" text
 html = re.sub(
     r'Last updated: [A-Za-z]+ \d{4}',
     f'Last updated: {date_label}',
-    html
-)
-
-# Replace allocation chart title
-html = re.sub(
-    r'Asset Allocation — [A-Za-z]+ \d{4}',
-    f'Asset Allocation — {date_label}',
     html
 )
 
