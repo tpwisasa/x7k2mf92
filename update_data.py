@@ -69,6 +69,24 @@ for r in rows:
 
 snapshots_js = "const SNAPSHOTS = [\n" + "\n".join(snap_lines) + "\n];"
 
+# Safety check: Sum_Total must equal Sum_Cash + Sum_Investment (Investment
+# already includes gold), and the individual accounts must add up to the
+# total. If the spreadsheet columns ever shift, this stops the script
+# instead of publishing wrong numbers.
+for r in rows:
+    yrm = n(r[0])
+    total = n(r[25])
+    summary = n(r[23]) + n(r[24])  # Cash + Investment
+    parts = sum(n(r[i]) for i in range(1, 22))  # all individual accounts
+    if abs(total - summary) > max(1000, total * 0.001):
+        raise SystemExit(
+            f"ERROR {yrm}: Total {total:,} != Cash+Investment {summary:,}. "
+            "Spreadsheet columns may have moved — index.html NOT updated.")
+    if abs(total - parts) > max(1000, total * 0.001):
+        raise SystemExit(
+            f"ERROR {yrm}: Total {total:,} != sum of accounts {parts:,}. "
+            "Spreadsheet columns may have moved — index.html NOT updated.")
+
 # Date label from latest YRM
 yrm = str(n(rows[-1][0]))
 mon = MONTHS[int(yrm[4:6]) - 1]
@@ -80,11 +98,13 @@ with open(HTML, "r", encoding="utf-8") as f:
     html = f.read()
 
 # Replace SNAPSHOTS block
-html = re.sub(
+html, n_subs = re.subn(
     r'const SNAPSHOTS = \[[\s\S]*?\];',
     snapshots_js,
     html, count=1
 )
+if n_subs != 1:
+    raise SystemExit("ERROR: SNAPSHOTS block not found in index.html — nothing updated.")
 
 # Replace "Last updated" text
 html = re.sub(
