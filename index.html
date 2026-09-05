@@ -25,347 +25,467 @@
   :root {
     --bg: #f8f7ff;
     --surface: #ffffff;
-    --surface2: #eeebff;
-    --border: rgba(108,79,175,0.12);
+    --surface2: #f1edff;
+    --border: rgba(108,79,175,0.13);
+    --border-soft: rgba(108,79,175,0.08);
     --text: #1e1b2e;
+    --text2: #55506f;
     --muted: #8b85a0;
     --accent: #7c5cbf;
+    --accent-tint: rgba(124,92,191,0.09);
     --accent2: #5a9e7e;
     --accent3: #c0557a;
     --danger: #c0557a;
     --success: #5a9e7e;
+    --gold: #c9a227;
     --serif: 'DM Serif Display', Georgia, serif;
-    --sans: 'DM Sans', system-ui, sans-serif;
+    --sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+    --r-sm: 10px;
+    --r-md: 14px;
+    --r-lg: 20px;
+    --gutter: 56px;
+    --maxw: 1240px;
   }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { font-size: 16px; }
+  html { font-size: 16px; -webkit-text-size-adjust: 100%; }
   body {
     background: var(--bg);
     color: var(--text);
     font-family: var(--sans);
     font-weight: 300;
+    line-height: 1.5;
     min-height: 100vh;
-    padding: 0 0 60px;
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
+  canvas { max-width: 100%; }
 
-  /* HEADER */
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding-inline: var(--gutter); }
+
+  /* ── HEADER ───────────────────────────── */
   .header {
-    padding: 48px 48px 32px;
-    border-bottom: 1px solid var(--border);
+    padding-top: 56px;
+    padding-bottom: 28px;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 20px 32px;
+    border-bottom: 1px solid var(--border);
   }
   .header-left h1 {
     font-family: var(--serif);
-    font-size: 36px;
+    font-size: clamp(30px, 3.4vw, 42px);
     font-weight: 400;
-    color: var(--text);
-    letter-spacing: -0.5px;
-    line-height: 1.1;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
   }
   .header-left h1 em { color: var(--accent); font-style: italic; }
   .header-left .subtitle {
-    margin-top: 6px;
-    font-size: 13px;
+    margin-top: 8px;
+    font-size: 11px;
     color: var(--muted);
-    letter-spacing: 0.08em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
-  .header-right {
-    text-align: right;
-  }
+  .header-right { text-align: right; line-height: 1.2; }
   .last-updated {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--muted);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
   .total-badge {
     font-family: var(--serif);
-    font-size: 32px;
+    font-size: clamp(30px, 3vw, 38px);
     color: var(--accent);
-    letter-spacing: -1px;
+    letter-spacing: -0.03em;
+    margin-top: 2px;
   }
 
-  /* LAYOUT */
-  .main { padding: 0 48px; max-width: 1000px; margin: 0 auto; }
-  .header { max-width: 1000px; margin: 0 auto; }
-  .section { margin-top: 40px; }
+  /* ── SECTIONS ─────────────────────────── */
+  .section { margin-top: 44px; }
   .section-title {
     font-size: 10px;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 16px;
+    margin-bottom: 18px;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border);
   }
 
-  /* COUNTDOWN STRIP */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 26px 28px;
+  }
+
+  /* ── COUNTDOWN ────────────────────────── */
   .countdown-strip {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    background: var(--border);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: var(--r-lg);
     overflow: hidden;
     margin-top: 40px;
   }
   .countdown-cell {
-    background: var(--surface);
-    padding: 28px 24px;
+    padding: 30px 20px;
     text-align: center;
+    border-right: 1px solid var(--border-soft);
   }
+  .countdown-cell:last-child { border-right: 0; }
   .countdown-cell .c-num {
     font-family: var(--serif);
-    font-size: 48px;
+    font-size: clamp(30px, 3.6vw, 46px);
     line-height: 1;
     color: var(--accent);
-    letter-spacing: -2px;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
   }
   .countdown-cell .c-label {
-    font-size: 11px;
-    letter-spacing: 0.1em;
+    font-size: 10px;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-top: 8px;
+    margin-top: 10px;
   }
+  .countdown-cell.highlight { background: var(--accent-tint); }
   .countdown-cell.highlight .c-num { color: var(--accent2); }
 
-  /* METRIC CARDS */
+  /* ── METRICS ──────────────────────────── */
   .metric-row {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 16px;
   }
   .metric-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
+    border-radius: var(--r-md);
+    padding: 22px 22px 20px;
     min-width: 0;
   }
-  .metric-card .m-label {
-    font-size: 11px;
-    letter-spacing: 0.1em;
+  .m-label {
+    font-size: 10px;
+    letter-spacing: 0.13em;
     text-transform: uppercase;
     color: var(--muted);
     margin-bottom: 12px;
   }
-  .metric-card .m-val {
+  .m-val {
     font-family: var(--serif);
-    font-size: 28px;
+    font-size: clamp(22px, 2.1vw, 28px);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
     color: var(--text);
-    letter-spacing: -0.5px;
-    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
   }
-  .metric-card .m-sub {
+  .m-val.gold  { color: var(--accent); }
+  .m-val.green { color: var(--accent2); }
+  .m-sub {
     font-size: 12px;
     color: var(--muted);
     margin-top: 8px;
+    line-height: 1.4;
   }
-  .metric-card .m-val.green { color: var(--accent2); }
-  .metric-card .m-val.gold { color: var(--accent); }
 
-  /* PROGRESS BAR */
-  .progress-section { margin-top: 40px; }
-  .progress-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
-  .progress-header .p-label { font-size: 13px; color: var(--muted); }
-  .progress-header .p-pct { font-family: var(--serif); font-size: 22px; color: var(--accent); }
+  /* ── PROGRESS ─────────────────────────── */
+  .progress-section .card { padding: 26px 28px 22px; }
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .p-label { font-size: 13px; color: var(--text2); }
+  .p-pct {
+    font-family: var(--serif);
+    font-size: 32px;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
   .progress-track {
-    height: 6px;
+    height: 12px;
     background: var(--surface2);
-    border-radius: 99px;
+    border-radius: 999px;
     overflow: hidden;
   }
   .progress-fill {
     height: 100%;
-    border-radius: 99px;
-    background: linear-gradient(90deg, var(--accent2), var(--accent));
-    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent2) 100%);
+    border-radius: 999px;
+    transition: width 0.7s cubic-bezier(0.22,1,0.36,1);
   }
   .progress-labels {
     display: flex;
     justify-content: space-between;
-    margin-top: 8px;
     font-size: 12px;
     color: var(--muted);
+    margin-top: 10px;
+    font-variant-numeric: tabular-nums;
   }
 
-  /* TWO-COL LAYOUT */
-  .two-col {
+  /* ── CHART + ALLOCATION GRID ──────────── */
+  .split {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
     gap: 20px;
+    align-items: start;
   }
   .chart-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
+    border-radius: var(--r-lg);
+    padding: 24px 26px 20px;
+    min-width: 0;
   }
-  .chart-card .chart-title {
+  .chart-title {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+  .chart-box { position: relative; height: 340px; }
+
+  .alloc-inner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .donut-holder {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    flex-shrink: 0;
+    margin-inline: auto;
+  }
+  .alloc-table {
+    border-collapse: collapse;
+    flex: 1 1 240px;
+    min-width: 0;
+    font-size: 13px;
+  }
+  .alloc-table td { padding: 7px 0; vertical-align: middle; }
+  .alloc-main-row td { border-top: 1px solid var(--border-soft); }
+  .alloc-main-row:first-child td { border-top: 0; }
+  .alloc-main-row .a-name { font-weight: 400; color: var(--text); }
+  .alloc-sub-row td { padding: 4px 0; }
+  .a-sub-name { color: var(--muted); font-size: 12px; padding-left: 4px; }
+  .a-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 9px;
+    vertical-align: 1px;
+  }
+  .a-pct {
+    text-align: right;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    padding-right: 14px !important;
+  }
+  .a-val {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: var(--text2);
+  }
+  .alloc-sub-row .a-pct, .alloc-sub-row .a-val { font-size: 12px; }
+
+  /* ── ASSUMPTIONS ──────────────────────── */
+  .assump-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px 40px;
+  }
+  .assump-section-label {
+    grid-column: 1 / -1;
+    font-size: 10px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 18px 0 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .assump-section-label:first-child { margin-top: 0; }
+  .arow { padding: 12px 0; min-width: 0; }
+  .arow-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .a-row-label { font-size: 13px; color: var(--text2); }
+  .a-row-val {
+    font-family: var(--serif);
+    font-size: 19px;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .a-rate-badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface2);
+    border-radius: 999px;
+    padding: 3px 10px;
+    margin-top: 9px;
+  }
+  .assump-auto-label {
     font-size: 11px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 20px;
+    background: var(--surface2);
+    border-radius: 999px;
+    padding: 3px 10px;
   }
+  .arow.arow-static .arow-top { margin-bottom: 0; }
+  .assump-divider {
+    grid-column: 1 / -1;
+    border: 0;
+    border-top: 1px solid var(--border-soft);
+    margin: 18px 0 4px;
+  }
+  .infl-note {
+    grid-column: 1 / -1;
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--surface2);
+    border-radius: var(--r-sm);
+    padding: 12px 16px;
+    margin-top: 10px;
+  }
+  .infl-note em { font-style: normal; color: var(--accent); }
 
-  /* ALLOCATION TABLE */
-  .alloc-table { width: 100%; border-collapse: collapse; margin-top: 4px; }
-  .alloc-table tr { border-bottom: 1px solid var(--border); }
-  .alloc-table tr:last-child { border-bottom: none; }
-  .alloc-table td { padding: 7px 0; font-size: 11px; vertical-align: middle; }
-  .alloc-table .a-name { color: var(--text); font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; display: block; }
-  .alloc-table .a-bar-cell { width: 100px; padding: 10px 12px; }
-  .alloc-bar-track { height: 3px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
-  .alloc-bar-fill { height: 100%; border-radius: 99px; }
-  .alloc-table .a-amt { text-align: right; color: var(--muted); font-size: 12px; white-space: nowrap; }
-  .alloc-table .a-pct { text-align: right; color: var(--accent); font-size: 12px; width: 42px; }
-
-  /* SLIDERS / ASSUMPTIONS */
-  .assumptions-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 28px;
-    margin-top: 20px;
-  }
-  .assumption-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 20px;
-  }
-  .assumption-row:last-child { margin-bottom: 0; }
-  .a-row-label { font-size: 12px; color: var(--muted); width: 200px; flex-shrink: 0; }
-  .a-row-slider { flex: 1; accent-color: var(--accent); }
-  .a-row-val {
-    font-family: var(--serif);
-    font-size: 18px;
-    color: var(--accent);
-    width: 90px;
-    text-align: right;
-    flex-shrink: 0;
-  }
-
+  /* ── RANGE INPUT ──────────────────────── */
   input[type=range] {
     -webkit-appearance: none;
+    appearance: none;
     width: 100%;
-    height: 3px;
-    border-radius: 99px;
+    height: 4px;
+    border-radius: 999px;
     background: var(--surface2);
     outline: none;
     cursor: pointer;
   }
   input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 14px; height: 14px;
+    appearance: none;
+    width: 20px; height: 20px;
     border-radius: 50%;
     background: var(--accent);
-    cursor: pointer;
+    border: 3px solid var(--surface);
+    box-shadow: 0 1px 5px rgba(30,27,46,0.28);
   }
+  input[type=range]::-moz-range-thumb {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--surface);
+    box-shadow: 0 1px 5px rgba(30,27,46,0.28);
+  }
+  input[type=range]:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
 
-  /* HOW TO UPDATE */
-  .update-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 28px;
-    margin-top: 20px;
-  }
-  .update-card h3 { font-family: var(--serif); font-size: 20px; font-weight: 400; margin-bottom: 16px; }
-  .update-card ol { padding-left: 20px; }
-  .update-card li { font-size: 13px; color: var(--muted); line-height: 1.9; }
-  .update-card code {
-    background: var(--surface2);
-    color: var(--accent);
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: 12px;
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 768px) {
-    .header { padding: 24px 16px 18px; flex-direction: column; align-items: flex-start; gap: 8px; }
-    .header-right { text-align: left; }
-    .main { padding: 0 16px; }
-    .countdown-strip { grid-template-columns: repeat(2, 1fr); }
-    .metric-row { grid-template-columns: 1fr; gap: 10px; }
-    .metric-card { padding: 20px 24px; min-width: 0; }
-    .metric-card .m-val { font-size: 26px; }
-    .two-col { grid-template-columns: 1fr; }
-    .alloc-inner { flex-direction: column; align-items: center; }
-    .alloc-table { width: 100%; }
-    .countdown-cell { padding: 20px 12px; }
-    .countdown-cell .c-num { font-size: 38px; }
-  }
-
+  /* ── MOTION ───────────────────────────── */
   .fade-in { animation: fadeIn 0.6s ease both; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-
-  /* ── Allocation two-panel ── */
-  .alloc-inner { display:flex; align-items:flex-start; gap:16px; }
-  .alloc-table td { padding: 3px 6px; vertical-align:middle; font-size:12px; }
-  .alloc-table .a-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
-  .alloc-table .a-name { color:var(--text); white-space:nowrap; max-width:none; overflow:visible; text-overflow:unset; }
-  .alloc-table .a-pct  { color:var(--muted); text-align:right; min-width:36px; }
-  .alloc-table .a-val  { color:var(--text); text-align:right; min-width:54px; font-size:11px; }
-  .alloc-sub-row td    { padding: 1px 6px; font-size:11px; color:var(--muted); }
-  .alloc-sub-row .a-sub-name { padding-left:18px; }
-
-  /* ── Assumptions redesign ── */
-  /* Assumptions redesign */
-  .assump-grid { display: flex; flex-direction: column; gap: 0; }
-  .assump-section-label { font-size: 10px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; padding: 16px 0 8px 0; }
-  .assump-section-label:first-child { padding-top: 0; }
-  .assump-header {
-    display: grid;
-    grid-template-columns: 160px 1fr 90px 70px;
-    gap: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 4px;
+  @media (prefers-reduced-motion: reduce) {
+    .fade-in { animation: none; }
+    .progress-fill { transition: none; }
   }
-  .assump-header span { font-size: 10px; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
-  .assumption-row {
-    display: grid;
-    grid-template-columns: 160px 1fr 90px 70px;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .assumption-row:last-of-type { border-bottom: none; }
-  .assumption-row .a-row-label { font-size: 13px; color: var(--text); }
-  .assumption-row input[type=range] { width: 100%; accent-color: var(--accent); }
-  .a-rate-badge { font-size: 11px; color: var(--accent2); background: rgba(90,158,126,0.1); border-radius: 6px; padding: 3px 8px; white-space: nowrap; text-align: center; }
-  .a-row-val { font-size: 14px; font-family: var(--serif); color: var(--accent); text-align: right; }
-  .assump-auto-label { font-size: 11px; color: var(--muted); font-style: italic; }
-  .assump-divider { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
-  .infl-note { font-size: 11px; color: var(--muted); padding: 8px 0 0; }
-  .infl-note em { color: var(--accent2); font-style: normal; }
 
-  @media (max-width: 768px) {
-    .assump-header { display: none; }
-    .assumption-row {
-      grid-template-columns: 1fr auto;
-      grid-template-rows: auto auto;
-      gap: 6px 12px;
-      padding: 14px 0;
+  /* ── LAPTOP ───────────────────────────── */
+  @media (max-width: 1100px) {
+    :root { --gutter: 36px; }
+    .split { grid-template-columns: minmax(0, 1fr); }
+    .chart-box { height: 300px; }
+    .alloc-inner { justify-content: center; }
+  }
+
+  @media (max-width: 900px) {
+    .metric-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .assump-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  }
+
+  /* ── PHONE ────────────────────────────── */
+  @media (max-width: 700px) {
+    :root { --gutter: 20px; --r-lg: 16px; --r-md: 12px; }
+    body { padding-bottom: calc(40px + env(safe-area-inset-bottom)); }
+
+    .header {
+      padding-top: 32px;
+      padding-bottom: 22px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 18px;
     }
-    .assumption-row .a-row-label       { grid-column: 1; grid-row: 1; font-size: 14px; }
-    .assumption-row .a-row-val         { grid-column: 2; grid-row: 1; font-size: 16px; }
-    .assumption-row input[type=range]  { grid-column: 1; grid-row: 2; }
-    .assumption-row .a-rate-badge      { grid-column: 2; grid-row: 2; justify-self: end; }
-    .assumption-row .assump-auto-label { grid-column: 1; grid-row: 2; font-size: 11px; }
+    .header-right { text-align: left; }
+    .header-left h1 { font-size: 32px; }
+    .total-badge { font-size: 34px; }
+
+    .section { margin-top: 32px; }
+    .card, .chart-card { padding: 20px 18px; }
+
+    .countdown-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 28px;
+    }
+    .countdown-cell {
+      padding: 22px 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .countdown-cell:nth-child(2n) { border-right: 0; }
+    .countdown-cell:nth-last-child(-n+2) { border-bottom: 0; }
+    .countdown-cell .c-num { font-size: 30px; }
+    .countdown-cell .c-label { font-size: 9px; margin-top: 8px; }
+
+    .metric-row { gap: 12px; }
+    .metric-card { padding: 18px 16px; }
+    .m-val { font-size: 21px; }
+    .m-sub { font-size: 11px; }
+
+    .progress-header { flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .p-pct { font-size: 40px; }
+
+    .chart-box { height: 240px; }
+
+    .alloc-inner { flex-direction: column; gap: 18px; align-items: stretch; }
+    .alloc-table { width: 100%; flex: 1 1 auto; }
+
+    .arow { padding: 14px 0; }
+    input[type=range] { height: 6px; }
+    input[type=range]::-webkit-slider-thumb { width: 26px; height: 26px; }
+    input[type=range]::-moz-range-thumb { width: 26px; height: 26px; }
   }
 
+  /* Full-precision figures (฿18,743,103) need the full column on phones */
+  @media (max-width: 480px) {
+    .metric-row { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  @media (max-width: 380px) {
+    .countdown-cell .c-num { font-size: 26px; }
+    .m-val { font-size: 19px; }
+  }
 </style>
 </head>
 <body>
@@ -426,18 +546,18 @@ function fmtFull(n) { return '฿' + Math.round(n).toLocaleString(); }
 </script>
 
 <!-- HEADER -->
-<header class="header fade-in">
+<header class="header wrap fade-in">
   <div class="header-left">
     <h1>Our Road to <em>Freedom</em></h1>
     <div class="subtitle">Retirement Progress Dashboard</div>
   </div>
   <div class="header-right">
     <div class="last-updated" id="last-updated-text">Last updated: Sep 2026</div>
-<div class="total-badge" id="header-total">฿17.7M</div>
+    <div class="total-badge" id="header-total">฿17.7M</div>
   </div>
 </header>
 
-<main class="main">
+<main class="main wrap">
 
   <!-- COUNTDOWN -->
   <div class="countdown-strip fade-in" id="countdown-strip">
@@ -477,115 +597,135 @@ function fmtFull(n) { return '฿' + Math.round(n).toLocaleString(); }
   <!-- PROGRESS -->
   <div class="progress-section section fade-in">
     <div class="section-title">Progress to Retirement Goal</div>
-    <div class="progress-header">
-      <span class="p-label">Current savings vs target nest egg</span>
-      <span class="p-pct" id="prog-pct">0%</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="prog-fill" style="width:0%"></div>
-    </div>
-    <div class="progress-labels">
-      <span id="prog-now">฿0</span>
-      <span id="prog-target">฿0</span>
-    </div>
-  </div>
-
-  <!-- NET WORTH CHART -->
-  <div class="section fade-in">
-    <div class="chart-card">
-      <div class="chart-title">Net Worth History &amp; Projection</div>
-      <div style="position:relative;height:240px;">
-        <canvas id="growthChart" role="img" aria-label="Line chart showing net worth growth and projection.">Net worth history and projection.</canvas>
+    <div class="card">
+      <div class="progress-header">
+        <span class="p-label">Current savings vs target nest egg</span>
+        <span class="p-pct" id="prog-pct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+      <div class="progress-labels">
+        <span id="prog-now">฿0</span>
+        <span id="prog-target">฿0</span>
       </div>
     </div>
   </div>
 
-  <!-- ASSET ALLOCATION: TODAY -->
+  <!-- CHART + ALLOCATION -->
   <div class="section fade-in">
-    <div class="section-title">Asset Allocation</div>
-    <div class="chart-card">
-      <div class="chart-title" id="alloc-title-today">Today</div>
-      <div class="alloc-inner">
-        <div style="position:relative;width:130px;height:130px;flex-shrink:0;">
-          <canvas id="allocChart" width="130" height="130"></canvas>
+    <div class="split">
+
+      <div class="chart-card">
+        <div class="chart-title">Net Worth History &amp; Projection</div>
+        <div class="chart-box">
+          <canvas id="growthChart" role="img" aria-label="Line chart showing net worth growth and projection.">Net worth history and projection.</canvas>
         </div>
-        <table class="alloc-table" id="alloc-table-today"></table>
       </div>
+
+      <div class="chart-card">
+        <div class="chart-title" id="alloc-title-today">Asset Allocation — Today</div>
+        <div class="alloc-inner">
+          <div class="donut-holder">
+            <canvas id="allocChart" width="140" height="140"></canvas>
+          </div>
+          <table class="alloc-table" id="alloc-table-today"></table>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <!-- ASSUMPTIONS -->
   <div class="section fade-in">
     <div class="section-title">Monthly Contributions &amp; Growth Rates</div>
-    <div class="assumptions-card">
+    <div class="card">
       <div class="assump-grid">
-
-        <div class="assump-header">
-          <span>Asset</span><span>Monthly add</span><span>Growth / yr</span><span>Amount</span>
-        </div>
 
         <div class="assump-section-label">Adjustable</div>
 
-        <div class="assumption-row">
-          <span class="a-row-label">Gold</span>
-          <input type="range" id="sl-gold" min="0" max="100000" step="1000" value="0">
+        <div class="arow">
+          <div class="arow-top">
+            <span class="a-row-label">Gold</span>
+            <span class="a-row-val" id="sl-gold-val">฿0K</span>
+          </div>
+          <input type="range" id="sl-gold" min="0" max="100000" step="1000" value="0" aria-label="Monthly contribution to Gold">
           <span class="a-rate-badge">6% / yr</span>
-          <span class="a-row-val" id="sl-gold-val">฿0K</span>
         </div>
-        <div class="assumption-row">
-          <span class="a-row-label">Bitcoin</span>
-          <input type="range" id="sl-bitcoin" min="0" max="100000" step="1000" value="3000">
+
+        <div class="arow">
+          <div class="arow-top">
+            <span class="a-row-label">Bitcoin</span>
+            <span class="a-row-val" id="sl-bitcoin-val">฿3K</span>
+          </div>
+          <input type="range" id="sl-bitcoin" min="0" max="100000" step="1000" value="3000" aria-label="Monthly contribution to Bitcoin">
           <span class="a-rate-badge">15% / yr</span>
-          <span class="a-row-val" id="sl-bitcoin-val">฿3K</span>
         </div>
-        <div class="assumption-row">
-          <span class="a-row-label">Equity — World</span>
-          <input type="range" id="sl-world" min="0" max="100000" step="1000" value="45000">
+
+        <div class="arow">
+          <div class="arow-top">
+            <span class="a-row-label">Equity — World</span>
+            <span class="a-row-val" id="sl-world-val">฿45K</span>
+          </div>
+          <input type="range" id="sl-world" min="0" max="100000" step="1000" value="45000" aria-label="Monthly contribution to World equity">
           <span class="a-rate-badge">7% / yr</span>
-          <span class="a-row-val" id="sl-world-val">฿45K</span>
         </div>
-        <div class="assumption-row">
-          <span class="a-row-label">Equity — Thailand</span>
-          <input type="range" id="sl-thai" min="0" max="100000" step="1000" value="0">
+
+        <div class="arow">
+          <div class="arow-top">
+            <span class="a-row-label">Equity — Thailand</span>
+            <span class="a-row-val" id="sl-thai-val">฿0K</span>
+          </div>
+          <input type="range" id="sl-thai" min="0" max="100000" step="1000" value="0" aria-label="Monthly contribution to Thailand equity">
           <span class="a-rate-badge">5% / yr</span>
-          <span class="a-row-val" id="sl-thai-val">฿0K</span>
         </div>
-        <div class="assumption-row">
-          <span class="a-row-label">Equity — Vietnam</span>
-          <input type="range" id="sl-vietnam" min="0" max="100000" step="1000" value="0">
+
+        <div class="arow">
+          <div class="arow-top">
+            <span class="a-row-label">Equity — Vietnam</span>
+            <span class="a-row-val" id="sl-vietnam-val">฿0K</span>
+          </div>
+          <input type="range" id="sl-vietnam" min="0" max="100000" step="1000" value="0" aria-label="Monthly contribution to Vietnam equity">
           <span class="a-rate-badge">8% / yr</span>
-          <span class="a-row-val" id="sl-vietnam-val">฿0K</span>
         </div>
 
         <div class="assump-section-label">Updated automatically (growth applied)</div>
 
-        <div class="assumption-row">
-          <span class="a-row-label">Bond (Provident Fund)</span>
-          <span class="assump-auto-label">auto</span>
+        <div class="arow arow-static">
+          <div class="arow-top">
+            <span class="a-row-label">Bond (Provident Fund)</span>
+            <span class="assump-auto-label">auto</span>
+          </div>
           <span class="a-rate-badge">3% / yr</span>
-          <span class="a-row-val">—</span>
         </div>
-        <div class="assumption-row">
-          <span class="a-row-label">Company Share</span>
-          <span class="assump-auto-label">auto</span>
+
+        <div class="arow arow-static">
+          <div class="arow-top">
+            <span class="a-row-label">Company Share</span>
+            <span class="assump-auto-label">auto</span>
+          </div>
           <span class="a-rate-badge">5% / yr</span>
-          <span class="a-row-val">—</span>
         </div>
-        <div class="assumption-row">
-          <span class="a-row-label">Cash</span>
-          <span class="assump-auto-label">auto</span>
+
+        <div class="arow arow-static">
+          <div class="arow-top">
+            <span class="a-row-label">Cash</span>
+            <span class="assump-auto-label">auto</span>
+          </div>
           <span class="a-rate-badge">0.25% / yr</span>
-          <span class="a-row-val">—</span>
         </div>
 
         <hr class="assump-divider">
 
-        <div class="assumption-row">
-          <span class="a-row-label">Retirement income goal (today's ฿)</span>
-          <input type="range" id="sl-goal" min="60000" max="300000" step="10000" value="120000">
+        <div class="arow">
+          <div class="arow-top">
+            <span class="a-row-label">Retirement income goal (today's ฿)</span>
+            <span class="a-row-val" id="sl-goal-val">฿120K</span>
+          </div>
+          <input type="range" id="sl-goal" min="60000" max="300000" step="10000" value="120000" aria-label="Monthly retirement income goal">
           <span class="a-rate-badge">2% inflation</span>
-          <span class="a-row-val" id="sl-goal-val">฿120K</span>
         </div>
+
         <div class="infl-note" id="infl-note">→ At retirement: <em id="infl-adj-goal">—</em>/mo (inflation-adjusted)</div>
 
       </div>
@@ -687,7 +827,15 @@ function parseDate(yrm) {
 function labelFromYRM(yrm) {
   const s = String(Math.round(yrm));
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return months[parseInt(s.slice(4,6))-1] + ' ' + s.slice(2,4);
+  return months[parseInt(s.slice(4,6))-1] + " '" + s.slice(2,4);
+}
+function isNarrow() { return window.matchMedia('(max-width: 700px)').matches; }
+// Axis-only currency formatter — keeps ticks unambiguous (฿5M, not ฿5)
+function fmtAxis(n) {
+  const a = Math.abs(n);
+  if (a >= 1e6) { const m = n/1e6; return '฿' + (Math.abs(m) < 10 && m % 1 !== 0 ? m.toFixed(1) : Math.round(m)) + 'M'; }
+  if (a >= 1e3) return '฿' + Math.round(n/1e3) + 'K';
+  return '฿' + Math.round(n);
 }
 
 // ─────────────────────────────────────────
@@ -703,7 +851,7 @@ function buildProjection(retireMonths) {
     a = stepAssets(a);
     if (m % 3 === 0) {
       const d = new Date(now.getFullYear(), now.getMonth() + m, 1);
-      pts.push({ label: MON[d.getMonth()] + ' ' + String(d.getFullYear()).slice(2), val: Math.round(sumAssets(a)) });
+      pts.push({ label: MON[d.getMonth()] + " '" + String(d.getFullYear()).slice(2), val: Math.round(sumAssets(a)) });
     }
   }
   return pts;
@@ -742,6 +890,10 @@ function renderGrowthChart(retireMonths) {
           fill: true,
           tension: 0.35,
           pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#7c5cbf',
+          pointHoverBorderColor: '#fff',
+          pointHoverBorderWidth: 2,
           borderWidth: 2,
         },
         {
@@ -753,6 +905,10 @@ function renderGrowthChart(retireMonths) {
           tension: 0.35,
           borderDash: [4, 3],
           pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#5a9e7e',
+          pointHoverBorderColor: '#fff',
+          pointHoverBorderWidth: 2,
           borderWidth: 1.5,
         },
         {
@@ -769,22 +925,47 @@ function renderGrowthChart(retireMonths) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      layout: { padding: { top: 4, right: 4 } },
       plugins: {
         legend: { display: false },
         tooltip: {
+          backgroundColor: 'rgba(30,27,46,0.94)',
+          titleFont: { family: "'DM Sans', system-ui, sans-serif", size: 12, weight: '500' },
+          bodyFont:  { family: "'DM Sans', system-ui, sans-serif", size: 12 },
+          padding: 12,
+          cornerRadius: 10,
+          displayColors: true,
+          boxWidth: 8,
+          boxHeight: 8,
+          boxPadding: 5,
           callbacks: {
-            label: ctx => ctx.dataset.label + ': ' + fmtFull(ctx.raw)
+            label: ctx => ctx.raw == null ? null : ctx.dataset.label + ': ' + fmtFull(ctx.raw)
           }
         }
       },
       scales: {
         x: {
-          ticks: { color: '#8b85a0', font: { size: 10 }, maxTicksLimit: 8, maxRotation: 0 },
-          grid: { color: 'rgba(108,79,175,0.07)' }
+          ticks: {
+            color: '#8b85a0',
+            font: { size: 10, family: "'DM Sans', system-ui, sans-serif" },
+            maxTicksLimit: isNarrow() ? 5 : 9,
+            maxRotation: 0,
+            autoSkipPadding: 12
+          },
+          grid: { display: false },
+          border: { color: 'rgba(108,79,175,0.13)' }
         },
         y: {
-          ticks: { color: '#8b85a0', font: { size: 10 }, callback: v => fmt(v) },
-          grid: { color: 'rgba(108,79,175,0.07)' }
+          ticks: {
+            color: '#8b85a0',
+            font: { size: 10, family: "'DM Sans', system-ui, sans-serif" },
+            maxTicksLimit: isNarrow() ? 5 : 7,
+            padding: 6,
+            callback: v => fmtAxis(v)
+          },
+          grid: { color: 'rgba(108,79,175,0.07)' },
+          border: { display: false }
         }
       }
     }
@@ -907,7 +1088,7 @@ function update() {
     const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const yrm  = String(latest[0]);
     document.getElementById('alloc-title-today').textContent =
-      'Today — ' + MON[parseInt(yrm.slice(4,6))-1] + ' ' + yrm.slice(0,4);
+      'Asset Allocation — ' + MON[parseInt(yrm.slice(4,6))-1] + ' ' + yrm.slice(0,4);
   } else {
     ['cd-days','cd-months','cd-years','cd-retire-date'].forEach(id =>
       document.getElementById(id).textContent = '—');
@@ -948,6 +1129,14 @@ bindSlider('sl-vietnam', 'sl-vietnam-val', () => M_VIETNAM, v => M_VIETNAM = v);
 //  INIT
 // ─────────────────────────────────────────
 update();
+
+// Re-render charts when crossing the phone breakpoint so tick density adapts
+(function() {
+  const mq = window.matchMedia('(max-width: 700px)');
+  const onChange = () => update();
+  if (mq.addEventListener) mq.addEventListener('change', onChange);
+  else mq.addListener(onChange);
+})();
 
 
 </script>
